@@ -1,0 +1,79 @@
+{
+  "$schema_note": "Declarative list of Pi packages for this machine setup. Used by scripts/install.sh and scripts/dump.sh.",
+  "meta": {
+    "name": "larryboiNEUQ/pi-dotfiles",
+    "description": "Personal Pi coding-agent plugins + local extensions bootstrap",
+    "pi_version_hint": ">=0.81.0",
+    "updated": "2026-07-24"
+  },
+  "packages": [
+    {
+      "source": "npm:pi-hashline-edit@0.8.3",
+      "id": "pi-hashline-edit",
+      "kind": "npm",
+      "note": "Hash-anchored line edit helpers"
+    },
+    {
+      "source": "npm:pi-web-access@0.13.0",
+      "id": "pi-web-access",
+      "kind": "npm",
+      "note": "Web search, fetch, GitHub clone, YouTube/PDF/video"
+    },
+    {
+      "source": "npm:pi-codex-image-gen@0.1.12",
+      "id": "pi-codex-image-gen",
+      "kind": "npm",
+      "note": "Codex image generation"
+    },
+    {
+      "source": "npm:@tintinweb/pi-subagents@0.14.2",
+      "id": "@tintinweb/pi-subagents",
+      "kind": "npm",
+      "note": "Claude Code-style subagents"
+    },
+    {
+      "source": "https://github.com/larryboiNEUQ/pi-auto-review",
+      "id": "pi-auto-review",
+      "kind": "git",
+      "note": "Local fork: plan-B permission system + safe-allow"
+    },
+    {
+      "source": "npm:pi-mcp-adapter@2.11.0",
+      "id": "pi-mcp-adapter",
+      "kind": "npm",
+      "note": "Token-efficient MCP adapter (~200 token proxy)"
+    },
+    {
+      "source": "git:github.com/possibly/pi-gallery",
+      "id": "pi-gallery",
+      "kind": "git",
+      "note": "Session image gallery (/gallery)"
+    }
+  ],
+  "local_extensions": [
+    {
+      "path": "extensions/plan-mode",
+      "target": "~/.pi/agent/extensions/plan-mode",
+      "note": "Official Pi monorepo plan-mode example (v0.81.1)"
+    }
+  ],
+  "local_agents": [
+    {
+      "path": "agents",
+      "target": "~/.pi/agent/agents",
+      "note": "Subagent definitions (Explore / Plan / Worker / general-purpose)"
+    }
+  ],
+  "optional_templates": [
+    {
+      "path": "templates/extensions/pi-permission-system",
+      "target": "~/.pi/agent/extensions/pi-permission-system",
+      "note": "Permission system config only (logs not shipped); applied if --with-templates"
+    },
+    {
+      "path": "templates/extensions/pi-permission-safe-allow",
+      "target": "~/.pi/agent/extensions/pi-permission-safe-allow",
+      "note": "Safe-allow config only; applied if --with-templates"
+    }
+  ]
+}
