@@ -268,6 +268,7 @@ if [[ "$DRY_RUN" -eq 0 ]]; then
   echo "  2. /login if models need auth on this machine"
   echo "  3. /mcp setup  (if using pi-mcp-adapter)"
   echo "  4. /plan or Ctrl+Alt+P for plan-mode; /gallery for images"
+  echo "  5. Mid-prompt type \$skill-name for skill autocomplete (pi-inline-skill-complete)"
   echo
   echo "Optional: re-run with --with-settings to apply theme/model defaults"
 fi

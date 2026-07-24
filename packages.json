@@ -48,6 +48,18 @@
       "id": "pi-gallery",
       "kind": "git",
       "note": "Session image gallery (/gallery)"
+    },
+    {
+      "source": "https://github.com/larryboiNEUQ/pi-inline-skill-complete",
+      "id": "pi-inline-skill-complete",
+      "kind": "git",
+      "note": "Mid-prompt skill autocomplete: type $name → insert /skill:name (Pi blocks mid-line / triggers)"
+    },
+    {
+      "source": "npm:pi-skillful@0.3.14",
+      "id": "pi-skillful",
+      "kind": "npm",
+      "note": "Expand /skill:name anywhere on submit; skill visibility toggles (/skillful)"
     }
   ],
   "local_extensions": [

@@ -8,11 +8,24 @@
 
 | 类型 | 内容 |
 |------|------|
-| **npm packages** | `pi-hashline-edit`, `pi-web-access`, `pi-codex-image-gen`, `@tintinweb/pi-subagents`, `pi-mcp-adapter`（带版本钉） |
-| **git packages** | `larryboiNEUQ/pi-auto-review`, `possibly/pi-gallery` |
+| **npm packages** | `pi-hashline-edit`, `pi-web-access`, `pi-codex-image-gen`, `@tintinweb/pi-subagents`, `pi-mcp-adapter`, `pi-skillful`（带版本钉） |
+| **git packages** | `larryboiNEUQ/pi-auto-review`, `possibly/pi-gallery`, [`larryboiNEUQ/pi-inline-skill-complete`](https://github.com/larryboiNEUQ/pi-inline-skill-complete) |
 | **本地 extension** | 官方 `plan-mode`（`/plan`, `Ctrl+Alt+P`） |
 | **agents** | Explore / Plan / Worker / general-purpose |
 | **可选模板** | permission 相关 config（`--with-templates`） |
+
+### Skill 中间补全（新增）
+
+Pi 0.81.x 原生 `/` 补全只在输入框最前自动弹出；正文中间要用：
+
+| 插件 | 作用 |
+|------|------|
+| [`pi-inline-skill-complete`](https://github.com/larryboiNEUQ/pi-inline-skill-complete) | 正文中间输入 `$skill名` 自动补全，选中后插入 `/skill:name` |
+| `pi-skillful` | 发送时把任意位置的 `/skill:name` 展开为完整 skill 内容 |
+
+```text
+请审查这段代码 $code-review
+```
 
 **不会**同步：`auth.json`、API keys、`models-store.json`、sessions、logs。
 
@@ -61,6 +74,7 @@ pi list
 /mcp setup      # 若用 pi-mcp-adapter
 /plan           # 验证 plan-mode
 /gallery        # 验证 pi-gallery（有图时）
+# 正文中间输入 $skill名 验证 pi-inline-skill-complete
 ```
 
 ## 本机改完插件后如何回写仓库
