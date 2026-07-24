@@ -109,10 +109,13 @@ for p in packages:
         p["note"] = notes[p["id"]]
 
 doc = {
-    "$schema_note": "Declarative list of Pi packages for this machine setup. Used by scripts/install.sh and scripts/dump.sh.",
+    "$schema_note": "Declarative list of Pi packages for this setup. Used by scripts/install.sh and scripts/dump.sh.",
     "meta": {
         "name": old.get("meta", {}).get("name", "larryboiNEUQ/pi-dotfiles"),
-        "description": old.get("meta", {}).get("description", "Personal Pi coding-agent plugins + local extensions bootstrap"),
+        "description": old.get("meta", {}).get(
+            "description",
+            "Shared Pi coding-agent plugin setup (packages + plan-mode + agents)",
+        ),
         "pi_version_hint": old.get("meta", {}).get("pi_version_hint", ">=0.81.0"),
         "updated": date.today().isoformat(),
     },
@@ -131,7 +134,6 @@ doc = {
             "note": "Subagent definitions"
         }
     ]),
-    "optional_templates": old.get("optional_templates", []),
 }
 
 out_path.write_text(json.dumps(doc, indent=2) + "\n")

@@ -1,10 +1,10 @@
 {
-  "$schema_note": "Declarative list of Pi packages for this machine setup. Used by scripts/install.sh and scripts/dump.sh.",
+  "$schema_note": "Declarative list of Pi packages for this setup. Used by scripts/install.sh and scripts/dump.sh.",
   "meta": {
     "name": "larryboiNEUQ/pi-dotfiles",
-    "description": "Personal Pi coding-agent plugins + local extensions bootstrap",
+    "description": "Shared Pi coding-agent plugin setup (packages + plan-mode + agents)",
     "pi_version_hint": ">=0.81.0",
-    "updated": "2026-07-24"
+    "updated": "2026-07-25"
   },
   "packages": [
     {
@@ -35,7 +35,7 @@
       "source": "https://github.com/larryboiNEUQ/pi-auto-review",
       "id": "pi-auto-review",
       "kind": "git",
-      "note": "Local fork: plan-B permission system + safe-allow"
+      "note": "Permission system + delegated safe-allow reviewer"
     },
     {
       "source": "npm:pi-mcp-adapter@2.11.0",
@@ -74,18 +74,6 @@
       "path": "agents",
       "target": "~/.pi/agent/agents",
       "note": "Subagent definitions (Explore / Plan / Worker / general-purpose)"
-    }
-  ],
-  "optional_templates": [
-    {
-      "path": "templates/extensions/pi-permission-system",
-      "target": "~/.pi/agent/extensions/pi-permission-system",
-      "note": "Permission system config only (logs not shipped); applied if --with-templates"
-    },
-    {
-      "path": "templates/extensions/pi-permission-safe-allow",
-      "target": "~/.pi/agent/extensions/pi-permission-safe-allow",
-      "note": "Safe-allow config only; applied if --with-templates"
     }
   ]
 }
