@@ -125,6 +125,18 @@ doc = {
             "path": "extensions/plan-mode",
             "target": "~/.pi/agent/extensions/plan-mode",
             "note": "Official Pi monorepo plan-mode example"
+        },
+        {
+            "path": "extensions/footer-no-model.ts",
+            "target": "~/.pi/agent/extensions/footer-no-model.ts",
+            "note": "Stock token/cost/context footer without right-side model"
+        }
+    ]),
+    "local_configs": old.get("local_configs", [
+        {
+            "path": "configs/spark.json",
+            "target": "~/.pi/agent/spark.json",
+            "note": "Disable pi-spark footer so footer-no-model owns the status bar"
         }
     ]),
     "local_agents": old.get("local_agents", [
@@ -143,12 +155,22 @@ for p in packages:
 PY
 
 if [[ "$SYNC_LOCALS" -eq 1 ]]; then
-  echo "==> Syncing local plan-mode + agents from machine into repo"
+  echo "==> Syncing local extensions / configs / agents from machine into repo"
   if [[ -d "${PI_AGENT_DIR}/extensions/plan-mode" ]]; then
     rm -rf "${ROOT}/extensions/plan-mode"
     mkdir -p "${ROOT}/extensions"
     cp -R "${PI_AGENT_DIR}/extensions/plan-mode" "${ROOT}/extensions/plan-mode"
     echo "  synced extensions/plan-mode"
+  fi
+  if [[ -f "${PI_AGENT_DIR}/extensions/footer-no-model.ts" ]]; then
+    mkdir -p "${ROOT}/extensions"
+    cp -f "${PI_AGENT_DIR}/extensions/footer-no-model.ts" "${ROOT}/extensions/footer-no-model.ts"
+    echo "  synced extensions/footer-no-model.ts"
+  fi
+  if [[ -f "${PI_AGENT_DIR}/spark.json" ]]; then
+    mkdir -p "${ROOT}/configs"
+    cp -f "${PI_AGENT_DIR}/spark.json" "${ROOT}/configs/spark.json"
+    echo "  synced configs/spark.json"
   fi
   if [[ -d "${PI_AGENT_DIR}/agents" ]]; then
     mkdir -p "${ROOT}/agents"

@@ -7,7 +7,7 @@
 | 方向 | 脚本 | 作用 |
 |------|------|------|
 | 仓库 → 机器 | `scripts/install.sh` / `scripts/quick-install.sh` | 按 `packages.json` 安装远程包，拷贝 plan-mode 与 agents；可选 `--with-settings` |
-| 机器 → 仓库 | `scripts/dump.sh` | 从本机 Pi 配置写回 `packages.json`；`--sync-locals` 再同步 plan-mode / agents |
+| 机器 → 仓库 | `scripts/dump.sh` | 从本机 Pi 配置写回 `packages.json`；`--sync-locals` 再同步 plan-mode / footer-no-model / spark.json / agents |
 
 ## 多机同步循环
 
@@ -37,9 +37,15 @@ curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scrip
 1. 读 `~/.pi/agent/settings.json` 里的 `packages`
 2. 用 `~/.pi/agent/npm/package.json` 钉住已装 npm 版本
 3. 写回仓库 `packages.json`（保留已有 note、local_extensions、local_agents）
-4. 若带 `--sync-locals`：把本机 `~/.pi/agent/extensions/plan-mode` 与 `~/.pi/agent/agents/*.md` 拷回仓库
+4. 若带 `--sync-locals`：把本机下列路径拷回仓库：
+   - `~/.pi/agent/extensions/plan-mode` → `extensions/plan-mode`
+   - `~/.pi/agent/extensions/footer-no-model.ts` → `extensions/footer-no-model.ts`
+   - `~/.pi/agent/spark.json` → `configs/spark.json`
+   - `~/.pi/agent/agents/*.md` → `agents/`
 
 然后自行 commit / push。
+
+`install.sh` 会安装 `local_extensions`（目录或单文件）与 `local_configs`（如 `spark.json`）。
 
 ## 不要提交
 

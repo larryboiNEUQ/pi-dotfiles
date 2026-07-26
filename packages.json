@@ -2,9 +2,9 @@
   "$schema_note": "Declarative list of Pi packages for this setup. Used by scripts/install.sh and scripts/dump.sh.",
   "meta": {
     "name": "larryboiNEUQ/pi-dotfiles",
-    "description": "Shared Pi coding-agent plugin setup (packages + plan-mode + agents)",
+    "description": "Shared Pi coding-agent plugin setup (packages + plan-mode + agents + spark UX)",
     "pi_version_hint": ">=0.81.0",
-    "updated": "2026-07-25"
+    "updated": "2026-07-26"
   },
   "packages": [
     {
@@ -60,6 +60,24 @@
       "id": "pi-skillful",
       "kind": "npm",
       "note": "Expand /skill:name anywhere on submit; skill visibility toggles (/skillful)"
+    },
+    {
+      "source": "npm:pi-spark@0.21.1",
+      "id": "pi-spark",
+      "kind": "npm",
+      "note": "TUI polish: editor border, credits, presets, recap, auto-title (footer disabled via configs/spark.json)"
+    },
+    {
+      "source": "npm:@juicesharp/rpiv-ask-user-question@2.1.0",
+      "id": "@juicesharp/rpiv-ask-user-question",
+      "kind": "npm",
+      "note": "Structured multi-choice questionnaire tool (ask_user_question)"
+    },
+    {
+      "source": "npm:@narumitw/pi-goal@0.31.0",
+      "id": "@narumitw/pi-goal",
+      "kind": "npm",
+      "note": "Autonomous /goal mode with goal_complete / goal_blocked"
     }
   ],
   "local_extensions": [
@@ -67,6 +85,18 @@
       "path": "extensions/plan-mode",
       "target": "~/.pi/agent/extensions/plan-mode",
       "note": "Official Pi monorepo plan-mode example (v0.81.1)"
+    },
+    {
+      "path": "extensions/footer-no-model.ts",
+      "target": "~/.pi/agent/extensions/footer-no-model.ts",
+      "note": "Stock token/cost/context footer without right-side model (avoids duplicating pi-spark editor border)"
+    }
+  ],
+  "local_configs": [
+    {
+      "path": "configs/spark.json",
+      "target": "~/.pi/agent/spark.json",
+      "note": "Disable pi-spark footer so footer-no-model (or stock-style stats) can own the status bar"
     }
   ],
   "local_agents": [

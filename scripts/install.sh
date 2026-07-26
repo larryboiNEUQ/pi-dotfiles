@@ -110,7 +110,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Copy local extensions (plan-mode, etc.)
+# Copy local extensions (plan-mode, footer-no-model.ts, etc.)
 # ---------------------------------------------------------------------------
 log "Installing local extensions"
 python3 - "$PACKAGES_JSON" "$ROOT" "$DRY_RUN" <<'PY'
@@ -124,6 +124,17 @@ dry = sys.argv[3] == "1"
 def expand(p: str) -> Path:
     return Path(os.path.expanduser(p))
 
+def install_path(src: Path, dst: Path) -> None:
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    if src.is_dir():
+        if dst.exists():
+            shutil.rmtree(dst)
+        shutil.copytree(src, dst)
+    else:
+        if dst.exists() and dst.is_dir():
+            shutil.rmtree(dst)
+        shutil.copy2(src, dst)
+
 for item in pkg.get("local_extensions", []):
     src = root / item["path"]
     dst = expand(item["target"])
@@ -133,11 +144,37 @@ for item in pkg.get("local_extensions", []):
         continue
     if dry:
         continue
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    if dst.exists():
-        shutil.rmtree(dst)
-    shutil.copytree(src, dst)
+    install_path(src, dst)
 print("local extensions done")
+PY
+
+# ---------------------------------------------------------------------------
+# Copy local config files (e.g. spark.json)
+# ---------------------------------------------------------------------------
+log "Installing local configs"
+python3 - "$PACKAGES_JSON" "$ROOT" "$DRY_RUN" <<'PY'
+import json, os, shutil, sys
+from pathlib import Path
+
+pkg = json.load(open(sys.argv[1]))
+root = Path(sys.argv[2])
+dry = sys.argv[3] == "1"
+
+def expand(p: str) -> Path:
+    return Path(os.path.expanduser(p))
+
+for item in pkg.get("local_configs", []):
+    src = root / item["path"]
+    dst = expand(item["target"])
+    print(f"  {src} -> {dst}")
+    if not src.exists():
+        print(f"  WARN: missing source {src}", file=sys.stderr)
+        continue
+    if dry:
+        continue
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dst)
+print("local configs done")
 PY
 
 # ---------------------------------------------------------------------------
@@ -225,6 +262,8 @@ if [[ "$DRY_RUN" -eq 0 ]]; then
   echo "  3. /mcp setup  (if using pi-mcp-adapter)"
   echo "  4. /plan or Ctrl+Alt+P for plan-mode; /gallery for images"
   echo "  5. Mid-prompt type \$skill-name for skill autocomplete (pi-inline-skill-complete)"
+  echo "  6. /goal <objective> for autonomous goal mode (pi-goal)"
+  echo "  7. Footer should show ↑↓ tokens + cost (footer-no-model); model only on editor border"
   echo
   echo "Optional: re-run with --with-settings to apply theme/model defaults"
   echo "  (values in settings.partial.json; does not touch auth)"

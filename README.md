@@ -2,7 +2,7 @@
 
 作者在用的 [Pi coding agent](https://pi.dev) 插件 / 扩展配置，公开分享——拿去用即可。
 
-A shared Pi plugin setup (packages + plan-mode + agents). Install with one command.
+A shared Pi plugin setup (packages + plan-mode + agents + spark UX). Install with one command.
 
 ## 前提
 
@@ -17,7 +17,7 @@ pi --version   # >= 0.81
 
 ### A. 默认（推荐）
 
-只装插件 + 本地 extension / agents，**不**改主题与默认模型：
+只装插件 + 本地 extension / configs / agents，**不**改主题与默认模型：
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scripts/quick-install.sh | bash
@@ -87,11 +87,21 @@ curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scrip
 | [`pi-auto-review`](https://github.com/larryboiNEUQ/pi-auto-review) | 权限系统 + 委托 safe-allow 评审（包内默认即可，无需额外 config 模板） |
 | `pi-mcp-adapter` | 省 token 的 MCP 适配（约 200 token 代理） |
 
-### 本地扩展与 agents
+### 体验与工作流
+
+| 包 | 作用 |
+|----|------|
+| `pi-spark` | 紧凑 editor、credits / 限流、presets、idle recap、自动 session 标题等 |
+| `@juicesharp/rpiv-ask-user-question` | 结构化多选问卷工具 `ask_user_question`（有歧义时问你而不是瞎猜） |
+| `@narumitw/pi-goal` | `/goal` 自主目标模式（`goal_complete` / `goal_blocked`） |
+
+### 本地扩展、配置与 agents
 
 | 资源 | 作用 |
 |------|------|
 | `plan-mode` | 官方 plan 模式（`/plan`，快捷键见扩展说明） |
+| `footer-no-model.ts` | 原版风格 token / 金额 / 上下文 footer，**不显示**右侧模型（避免与 pi-spark 顶栏重复） |
+| `configs/spark.json` | `{ "footer": false }` — 关掉 pi-spark 自带 footer，让上面的 footer 接管状态栏 |
 | agents | Explore / Plan / Worker / general-purpose 子 agent 定义 |
 
 ## 装完验证
@@ -102,9 +112,15 @@ pi list
 /login              # 需要时配置模型鉴权
 /mcp setup          # 若用 pi-mcp-adapter
 /plan               # plan-mode
+/goal <目标>        # pi-goal（若已装）
 # 正文中间输入 $skill名  → inline skill 补全
 /gallery            # 有图时
 ```
+
+状态栏预期：
+
+- **editor 顶栏**：`provider/model:thinking`（pi-spark）
+- **footer**：`↑token ↓token $cost 上下文%` + credits 行，**无**右侧重复模型名
 
 ## 安全
 
