@@ -4,7 +4,7 @@
     "name": "larryboiNEUQ/pi-dotfiles",
     "description": "Shared Pi coding-agent plugin setup (packages + plan-mode + agents + spark UX)",
     "pi_version_hint": ">=0.81.0",
-    "updated": "2026-07-26"
+    "updated": "2026-08-09"
   },
   "packages": [
     {
@@ -14,7 +14,7 @@
       "note": "Hash-anchored line edit helpers"
     },
     {
-      "source": "npm:pi-web-access@0.13.0",
+      "source": "npm:pi-web-access@0.18.0",
       "id": "pi-web-access",
       "kind": "npm",
       "note": "Web search, fetch, GitHub clone, YouTube/PDF/video"
@@ -26,7 +26,7 @@
       "note": "Codex image generation"
     },
     {
-      "source": "npm:@tintinweb/pi-subagents@0.14.2",
+      "source": "npm:@tintinweb/pi-subagents@0.14.3",
       "id": "@tintinweb/pi-subagents",
       "kind": "npm",
       "note": "Claude Code-style subagents"
@@ -38,7 +38,7 @@
       "note": "Permission system + delegated safe-allow reviewer"
     },
     {
-      "source": "npm:pi-mcp-adapter@2.11.0",
+      "source": "npm:pi-mcp-adapter@2.21.0",
       "id": "pi-mcp-adapter",
       "kind": "npm",
       "note": "Token-efficient MCP adapter (~200 token proxy)"
@@ -62,19 +62,19 @@
       "note": "Expand /skill:name anywhere on submit; skill visibility toggles (/skillful)"
     },
     {
-      "source": "npm:pi-spark@0.21.1",
+      "source": "npm:pi-spark@0.22.0",
       "id": "pi-spark",
       "kind": "npm",
       "note": "TUI polish: editor border, credits, presets, recap, auto-title (footer disabled via configs/spark.json)"
     },
     {
-      "source": "npm:@juicesharp/rpiv-ask-user-question@2.1.0",
+      "source": "npm:@juicesharp/rpiv-ask-user-question@2.4.0",
       "id": "@juicesharp/rpiv-ask-user-question",
       "kind": "npm",
       "note": "Structured multi-choice questionnaire tool (ask_user_question)"
     },
     {
-      "source": "npm:@narumitw/pi-goal@0.31.0",
+      "source": "npm:@narumitw/pi-goal@0.49.6",
       "id": "@narumitw/pi-goal",
       "kind": "npm",
       "note": "Autonomous /goal mode with goal_complete / goal_blocked"
