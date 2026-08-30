@@ -54,9 +54,11 @@ pi update --extensions
 
 ### C. 附带作者偏好（可选）
 
-在 A 或 B 的基础上，把 [`settings.partial.json`](./settings.partial.json) 合并进 `~/.pi/agent/settings.json`（主题 / 默认 provider 与 model / thinking 级别）。**不碰** auth、API keys、sessions。插件与 auto-review **不依赖** 本选项。
+在 A 或 B 的基础上，把 [`settings.partial.json`](./settings.partial.json) 合并进 `~/.pi/agent/settings.json`（主题、默认 provider / model / thinking，以及精简启动与消息队列偏好）。**不碰** auth、API keys、sessions。插件与 auto-review **不依赖** 本选项。
 
 具体键值以 `settings.partial.json` 为准（勿在文档里猜模型名）。
+
+包级资源过滤不属于可选作者偏好，安装器总会应用：`pine-of-glass` 保留其他观测扩展，但禁用与 Pi Calm 工具隐藏冲突的 `pi-traceline`。
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scripts/quick-install.sh | bash -s -- --with-settings
@@ -119,6 +121,7 @@ curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scrip
 |----|------|
 | `pi-spark` | 紧凑 editor、credits / 限流、presets、idle recap、自动 session 标题等 |
 | [`pi-calm`](https://github.com/larryboiNEUQ/pi-calm) | `/calm` 切换安静展示：隐藏折叠 thinking 与内置工具外壳，保留完整执行和会话数据 |
+| `pine-of-glass` | 上下文 / cache / latency 观测；通过包过滤禁用 `pi-traceline`，避免覆盖 Pi Calm 的工具隐藏 |
 | `@juicesharp/rpiv-ask-user-question` | 结构化多选问卷工具 `ask_user_question`（有歧义时问你而不是瞎猜） |
 | `@narumitw/pi-goal` | `/goal` 自主目标模式（`goal_complete` / `goal_blocked`） |
 

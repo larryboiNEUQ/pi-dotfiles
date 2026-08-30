@@ -39,12 +39,15 @@ deps = {}
 if npm_path.exists():
     deps = json.loads(npm_path.read_text()).get("dependencies", {})
 
+filter_keys = ("extensions", "skills", "prompts", "themes")
 packages = []
 for src in settings.get("packages", []):
     if isinstance(src, dict):
         source = src.get("source", "")
+        filters = {key: src[key] for key in filter_keys if key in src}
     else:
         source = str(src)
+        filters = {}
     if not source:
         continue
 
@@ -92,7 +95,8 @@ for src in settings.get("packages", []):
         "source": pinned,
         "id": pkg_id,
         "kind": kind,
-        "note": ""
+        "note": "",
+        **filters,
     })
 
 # Preserve existing notes / local sections if present
@@ -113,16 +117,20 @@ for index, package in enumerate(packages):
     latest_source = latest_sources.get(package_id)
     if not latest_source:
         latest_source = f"npm:{package_id}" if package["kind"] == "npm" else package["source"]
-    packages[index] = {
+    entry = {
         "source": package["source"],
         "latest_source": latest_source,
         "id": package_id,
         "kind": package["kind"],
         "note": notes.get(package_id) or package["note"],
     }
+    for filter_key in filter_keys:
+        if filter_key in package:
+            entry[filter_key] = package[filter_key]
+    packages[index] = entry
 
 doc = {
-    "$schema_note": "Each package has a pinned source and an unversioned latest_source. Used by scripts/install.sh and scripts/dump.sh.",
+    "$schema_note": "Each package has a pinned source, an unversioned latest_source, and optional Pi resource filters. Used by scripts/install.sh and scripts/dump.sh.",
     "meta": {
         "name": old.get("meta", {}).get("name", "larryboiNEUQ/pi-dotfiles"),
         "description": old.get("meta", {}).get(

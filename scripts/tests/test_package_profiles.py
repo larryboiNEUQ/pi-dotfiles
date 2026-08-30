@@ -130,6 +130,53 @@ class PackageProfileTests(unittest.TestCase):
         self.assertIn("exact version", result.stderr)
         self.assertNotIn("pi install", result.stdout)
 
+    def test_install_applies_package_resource_filters_to_settings(self):
+        manifest = {
+            "packages": [
+                {
+                    "source": "npm:pine-of-glass@0.10.2",
+                    "latest_source": "npm:pine-of-glass",
+                    "id": "pine-of-glass",
+                    "kind": "npm",
+                    "extensions": ["!extensions/pi-traceline/**"],
+                    "note": "test package",
+                }
+            ],
+            "local_extensions": [],
+            "local_configs": [],
+            "local_agents": [],
+        }
+        repo = self.stage_install_repo(manifest)
+        agent_dir = self.root / "agent"
+        agent_dir.mkdir(parents=True)
+        (agent_dir / "settings.json").write_text(
+            json.dumps({"packages": ["npm:pine-of-glass@0.10.2", "npm:other@1.0.0"]}) + "\n"
+        )
+
+        result = self.run_install("--skip-packages", repo_root=repo)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        settings = json.loads((agent_dir / "settings.json").read_text())
+        self.assertEqual(
+            settings["packages"][0],
+            {
+                "source": "npm:pine-of-glass@0.10.2",
+                "extensions": ["!extensions/pi-traceline/**"],
+            },
+        )
+        self.assertEqual(settings["packages"][1], "npm:other@1.0.0")
+
+    def test_with_settings_merges_quiet_calm_compatible_preferences(self):
+        result = self.run_install("--skip-packages", "--with-settings")
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        settings = json.loads((self.root / "agent" / "settings.json").read_text())
+        self.assertTrue(settings["hideThinkingBlock"])
+        self.assertTrue(settings["quietStartup"])
+        self.assertTrue(settings["collapseChangelog"])
+        self.assertEqual(settings["steeringMode"], "all")
+        self.assertEqual(settings["followUpMode"], "all")
+
     def test_dump_preserves_latest_source_and_adds_it_for_new_npm_packages(self):
         repo = self.root / "dump-repo"
         (repo / "scripts").mkdir(parents=True)
@@ -155,7 +202,18 @@ class PackageProfileTests(unittest.TestCase):
         agent_dir = self.root / "dump-agent"
         (agent_dir / "npm").mkdir(parents=True)
         (agent_dir / "settings.json").write_text(
-            json.dumps({"packages": ["npm:existing", "npm:new-package"]}) + "\n"
+            json.dumps(
+                {
+                    "packages": [
+                        {
+                            "source": "npm:existing",
+                            "extensions": ["!extensions/pi-traceline/**"],
+                        },
+                        "npm:new-package",
+                    ]
+                }
+            )
+            + "\n"
         )
         (agent_dir / "npm" / "package.json").write_text(
             json.dumps({"dependencies": {"existing": "1.2.3", "new-package": "2.0.0"}}) + "\n"
@@ -178,6 +236,10 @@ class PackageProfileTests(unittest.TestCase):
         self.assertEqual(by_id["existing"]["source"], "npm:existing@1.2.3")
         self.assertEqual(by_id["existing"]["latest_source"], "npm:existing")
         self.assertEqual(by_id["existing"]["note"], "keep me")
+        self.assertEqual(
+            by_id["existing"]["extensions"],
+            ["!extensions/pi-traceline/**"],
+        )
         self.assertEqual(by_id["new-package"]["source"], "npm:new-package@2.0.0")
         self.assertEqual(by_id["new-package"]["latest_source"], "npm:new-package")
 

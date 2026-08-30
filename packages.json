@@ -1,10 +1,10 @@
 {
-  "$schema_note": "Each package has a pinned source and an unversioned latest_source. Used by scripts/install.sh and scripts/dump.sh.",
+  "$schema_note": "Each package has a pinned source, an unversioned latest_source, and optional Pi resource filters. Used by scripts/install.sh and scripts/dump.sh.",
   "meta": {
     "name": "larryboiNEUQ/pi-dotfiles",
     "description": "Shared Pi coding-agent plugin setup (packages + plan-mode + agents + spark UX)",
     "pi_version_hint": ">=0.81.0",
-    "updated": "2026-08-30"
+    "updated": "2026-08-31"
   },
   "packages": [
     {
@@ -90,6 +90,16 @@
       "id": "pi-calm",
       "kind": "git",
       "note": "Presentation-only Calm mode: hide collapsed thinking and built-in tool shells"
+    },
+    {
+      "source": "npm:pine-of-glass@0.10.2",
+      "latest_source": "npm:pine-of-glass",
+      "id": "pine-of-glass",
+      "kind": "npm",
+      "extensions": [
+        "!extensions/pi-traceline/**"
+      ],
+      "note": "Observability extensions; pi-traceline disabled because it overrides Pi Calm tool hiding"
     },
     {
       "source": "npm:@juicesharp/rpiv-ask-user-question@2.4.0",

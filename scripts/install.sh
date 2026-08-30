@@ -24,7 +24,7 @@ Usage: install.sh [options]
 
   --latest          Install unversioned/latest package sources.
   --with-settings    Merge settings.partial.json into ~/.pi/agent/settings.json
-                     (theme / default model / thinking). Does not touch auth.
+                     (theme / model / thinking / quiet display and queue prefs). Does not touch auth.
                      See settings.partial.json for current values.
   --skip-packages    Only copy local extensions/agents (no pi install).
   --dry-run          Print actions without changing the system.
@@ -160,6 +160,15 @@ for index, package in enumerate(packages):
             if isinstance(value, str) and value and not valid_git_source(value):
                 errors.append(f"{label}.{field_name} must be a valid single-line Git source")
 
+    for filter_key in ("extensions", "skills", "prompts", "themes"):
+        patterns = package.get(filter_key)
+        if patterns is None:
+            continue
+        if not isinstance(patterns, list) or any(
+            not isinstance(pattern, str) or not pattern for pattern in patterns
+        ):
+            errors.append(f"{label}.{filter_key} must be an array of non-empty strings")
+
 if errors:
     for error in errors:
         print(f"Invalid package manifest: {error}", file=sys.stderr)
@@ -196,6 +205,97 @@ if [[ "$SKIP_PACKAGES" -eq 0 ]]; then
 else
   log "Skipping package installs (--skip-packages)"
 fi
+
+# ---------------------------------------------------------------------------
+# Apply package resource filters after `pi install` has written package sources.
+# This is independent of --with-settings: filters are part of the package profile.
+# ---------------------------------------------------------------------------
+log "Applying package resource filters"
+python3 - "$PACKAGES_JSON" "$SETTINGS_JSON" "$INSTALL_PROFILE" "$DRY_RUN" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+manifest_path = Path(sys.argv[1])
+settings_path = Path(sys.argv[2])
+profile = sys.argv[3]
+dry = sys.argv[4] == "1"
+filter_keys = ("extensions", "skills", "prompts", "themes")
+
+manifest = json.loads(manifest_path.read_text())
+filtered_packages = [
+    package
+    for package in manifest.get("packages", [])
+    if any(key in package for key in filter_keys)
+]
+
+if not filtered_packages:
+    print("package filters done (none configured)")
+    raise SystemExit(0)
+
+source_field = "latest_source" if profile == "latest" else "source"
+if dry:
+    for package in filtered_packages:
+        keys = ", ".join(key for key in filter_keys if key in package)
+        print(f"  [dry-run] filter {package[source_field]} ({keys})")
+    raise SystemExit(0)
+
+if not settings_path.exists():
+    print(f"  WARN: settings not found at {settings_path}; package filters not applied", file=sys.stderr)
+    raise SystemExit(0)
+
+settings = json.loads(settings_path.read_text())
+configured = settings.get("packages")
+if not isinstance(configured, list):
+    print("  WARN: settings packages is not an array; package filters not applied", file=sys.stderr)
+    raise SystemExit(0)
+
+def entry_source(entry):
+    return entry.get("source", "") if isinstance(entry, dict) else str(entry)
+
+def npm_name(source):
+    if not source.startswith("npm:"):
+        return None
+    bare = source[len("npm:"):]
+    if bare.startswith("@"):
+        package, separator, version = bare.rpartition("@")
+        return package if separator and "/" in package and version else bare
+    return bare.split("@", 1)[0]
+
+def same_package(candidate, package):
+    selected = package[source_field]
+    if candidate in {selected, package["source"], package["latest_source"]}:
+        return True
+    selected_name = npm_name(selected)
+    return selected_name is not None and npm_name(candidate) == selected_name
+
+changed = False
+for package in filtered_packages:
+    selected = package[source_field]
+    match = next(
+        (index for index, entry in enumerate(configured) if same_package(entry_source(entry), package)),
+        None,
+    )
+    if match is None:
+        print(f"  WARN: {selected} is not configured; filters not applied", file=sys.stderr)
+        continue
+
+    current = configured[match]
+    replacement = dict(current) if isinstance(current, dict) else {}
+    replacement["source"] = selected
+    for key in filter_keys:
+        if key in package:
+            replacement[key] = package[key]
+        else:
+            replacement.pop(key, None)
+    configured[match] = replacement
+    changed = True
+    print(f"  filtered {selected}")
+
+if changed:
+    settings_path.write_text(json.dumps(settings, indent=2) + "\n")
+print("package filters done")
+PY
 
 # ---------------------------------------------------------------------------
 # Copy local extensions (plan-mode, footer-no-model.ts, etc.)
