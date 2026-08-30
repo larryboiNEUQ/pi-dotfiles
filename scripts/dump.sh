@@ -104,12 +104,25 @@ if out_path.exists():
         old = {}
 
 notes = {p.get("id"): p.get("note", "") for p in old.get("packages", [])}
-for p in packages:
-    if p["id"] in notes and notes[p["id"]]:
-        p["note"] = notes[p["id"]]
+latest_sources = {
+    p.get("id"): p.get("latest_source", "")
+    for p in old.get("packages", [])
+}
+for index, package in enumerate(packages):
+    package_id = package["id"]
+    latest_source = latest_sources.get(package_id)
+    if not latest_source:
+        latest_source = f"npm:{package_id}" if package["kind"] == "npm" else package["source"]
+    packages[index] = {
+        "source": package["source"],
+        "latest_source": latest_source,
+        "id": package_id,
+        "kind": package["kind"],
+        "note": notes.get(package_id) or package["note"],
+    }
 
 doc = {
-    "$schema_note": "Declarative list of Pi packages for this setup. Used by scripts/install.sh and scripts/dump.sh.",
+    "$schema_note": "Each package has a pinned source and an unversioned latest_source. Used by scripts/install.sh and scripts/dump.sh.",
     "meta": {
         "name": old.get("meta", {}).get("name", "larryboiNEUQ/pi-dotfiles"),
         "description": old.get("meta", {}).get(

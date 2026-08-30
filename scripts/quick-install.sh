@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # One-liner friendly entrypoint for a fresh machine.
 #   curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scripts/quick-install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scripts/quick-install.sh | bash -s -- --latest
 # or:
 #   git clone https://github.com/larryboiNEUQ/pi-dotfiles.git && cd pi-dotfiles && ./scripts/quick-install.sh
 set -euo pipefail

@@ -6,7 +6,7 @@
 
 | 方向 | 脚本 | 作用 |
 |------|------|------|
-| 仓库 → 机器 | `scripts/install.sh` / `scripts/quick-install.sh` | 按 `packages.json` 安装远程包，拷贝本地 extensions / configs / agents；可选 `--with-settings` |
+| 仓库 → 机器 | `scripts/install.sh` / `scripts/quick-install.sh` | 默认按固定 `source` 安装；`--latest` 改用 `latest_source`；再拷贝本地 extensions / configs / agents |
 | 机器 → 仓库 | `scripts/dump.sh` | 从本机 Pi 配置写回 `packages.json`；`--sync-locals` 再同步 plan-mode / footer-no-model / spark.json / pi-fff.json / agents |
 
 ## 多机同步循环
@@ -28,7 +28,29 @@ cd ~/.pi-dotfiles && git pull && ./scripts/install.sh
 curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scripts/quick-install.sh | bash
 ```
 
-需要作者主题 / 默认模型时再加 `--with-settings`（见 README 选项 B）。
+需要作者主题 / 默认模型时再加 `--with-settings`（见 README 选项 C）。
+
+## 固定版与 Latest 版
+
+`packages.json` 是唯一清单。每个远程包必须同时包含：
+
+- `source`：默认安装来源；npm 包必须带明确版本。
+- `latest_source`：`--latest` 安装来源；npm 包必须是无版本的 `npm:<id>`。
+
+默认同步保持可复现的 npm 版本：
+
+```bash
+./scripts/install.sh
+```
+
+显式选择上游最新版本：
+
+```bash
+./scripts/install.sh --latest
+pi update --extensions   # 以后继续更新无版本约束的包
+```
+
+安装器会在任何 `pi install` 之前验证清单中的 ID、类型和两个来源。新增包时不要只填写一个 Profile。当前 Git 来源均未固定 ref，因而两个字段相同；如未来固定 Git tag/commit，应继续为 `latest_source` 保留无 ref 的仓库来源。
 
 ## dump 做什么
 
@@ -36,7 +58,7 @@ curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scrip
 
 1. 读 `~/.pi/agent/settings.json` 里的 `packages`
 2. 用 `~/.pi/agent/npm/package.json` 钉住已装 npm 版本
-3. 写回仓库 `packages.json`（保留已有 note、local_extensions、local_configs、local_agents）
+3. 写回仓库 `packages.json`：保留已有 `latest_source`、note 和 local sections；新 npm 包自动生成无版本的 `latest_source`
 4. 若带 `--sync-locals`：把本机下列路径拷回仓库：
    - `~/.pi/agent/extensions/plan-mode` → `extensions/plan-mode`
    - `~/.pi/agent/extensions/footer-no-model.ts` → `extensions/footer-no-model.ts`
@@ -46,7 +68,7 @@ curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scrip
 
 然后自行 commit / push。
 
-`install.sh` 会安装 `local_extensions`（目录或单文件）与 `local_configs`（如 `spark.json`）。
+`install.sh` 会先校验 package Profile，再安装 `local_extensions`（目录或单文件）与 `local_configs`（如 `spark.json`）。
 
 ## 不要提交
 

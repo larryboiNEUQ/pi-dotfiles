@@ -13,11 +13,11 @@ pi --version   # >= 0.81
 
 ## 安装
 
-二选一（给人或 agent 直接复制命令）。
+先选择插件版本策略；作者偏好设置可与任一策略组合。
 
-### A. 默认（推荐）
+### A. 固定版（默认、推荐）
 
-只装插件 + 本地 extension / configs / agents，**不**改主题与默认模型：
+按 [`packages.json`](./packages.json) 的 `source` 安装固定 npm 版本，同时安装本地 extension / configs / agents；**不**改主题与默认模型：
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scripts/quick-install.sh | bash
@@ -30,31 +30,56 @@ git clone https://github.com/larryboiNEUQ/pi-dotfiles.git ~/.pi-dotfiles
 cd ~/.pi-dotfiles && ./scripts/install.sh
 ```
 
-### B. 附带作者偏好（可选）
+### B. Latest 版（可选）
 
-在 A 的基础上，把 [`settings.partial.json`](./settings.partial.json) 合并进 `~/.pi/agent/settings.json`（主题 / 默认 provider 与 model / thinking 级别）。**不碰** auth、API keys、sessions。插件与 auto-review **不依赖** 本选项。
+按 `latest_source` 安装不带版本约束的推荐插件：npm 包解析为安装时的 latest，Git 包跟随未固定 ref 的默认分支。
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scripts/quick-install.sh | bash -s -- --latest
+```
+
+或 clone 后：
+
+```bash
+./scripts/install.sh --latest
+```
+
+Latest 版不可复现，插件升级可能带来兼容性变化。其安装来源会以无版本约束形式写入 Pi 设置，后续可运行：
+
+```bash
+pi update --extensions
+```
+
+重新运行不带 `--latest` 的安装命令即可切回固定 npm 版本。当前清单中的 Git 包本来就没有 tag/commit ref，因此固定版和 Latest 版对这些 Git 包使用相同来源。
+
+### C. 附带作者偏好（可选）
+
+在 A 或 B 的基础上，把 [`settings.partial.json`](./settings.partial.json) 合并进 `~/.pi/agent/settings.json`（主题 / 默认 provider 与 model / thinking 级别）。**不碰** auth、API keys、sessions。插件与 auto-review **不依赖** 本选项。
 
 具体键值以 `settings.partial.json` 为准（勿在文档里猜模型名）。
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scripts/quick-install.sh | bash -s -- --with-settings
+# Latest + 作者偏好：末尾改为 --latest --with-settings
 ```
 
 或：
 
 ```bash
 ./scripts/install.sh --with-settings
+./scripts/install.sh --latest --with-settings
 ```
 
 安装前可 dry-run：
 
 ```bash
 ./scripts/install.sh --dry-run
+./scripts/install.sh --latest --dry-run
 ```
 
 ## 装了什么
 
-版本与完整清单见 [`packages.json`](./packages.json)。
+固定来源、Latest 来源与完整清单见 [`packages.json`](./packages.json)。
 
 ### 编辑与子代理
 
@@ -130,6 +155,7 @@ pi list
 ## 安全
 
 - 第三方 Pi package 拥有本机完整权限；只装你信任的源（见 `packages.json`）。
+- `--latest` 会随上游发布变化，稳定性与可复现性低于默认固定版。
 - **不会**入库：`auth.json`、API keys、`models-store.json`、sessions、logs。
 - 新机仍需自行 `/login` 与各服务密钥配置。
 

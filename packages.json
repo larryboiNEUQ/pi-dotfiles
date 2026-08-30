@@ -1,5 +1,5 @@
 {
-  "$schema_note": "Declarative list of Pi packages for this setup. Used by scripts/install.sh and scripts/dump.sh.",
+  "$schema_note": "Each package has a pinned source and an unversioned latest_source. Used by scripts/install.sh and scripts/dump.sh.",
   "meta": {
     "name": "larryboiNEUQ/pi-dotfiles",
     "description": "Shared Pi coding-agent plugin setup (packages + plan-mode + agents + spark UX)",
@@ -9,84 +9,98 @@
   "packages": [
     {
       "source": "npm:pi-hashline-edit@0.8.3",
+      "latest_source": "npm:pi-hashline-edit",
       "id": "pi-hashline-edit",
       "kind": "npm",
       "note": "Hash-anchored line edit helpers"
     },
     {
       "source": "npm:@ff-labs/pi-fff@0.10.6",
+      "latest_source": "npm:@ff-labs/pi-fff",
       "id": "@ff-labs/pi-fff",
       "kind": "npm",
       "note": "FFF-backed find/grep overrides with global pi-fff.json configuration"
     },
     {
       "source": "npm:pi-web-access@0.18.0",
+      "latest_source": "npm:pi-web-access",
       "id": "pi-web-access",
       "kind": "npm",
       "note": "Web search, fetch, GitHub clone, YouTube/PDF/video"
     },
     {
       "source": "npm:pi-codex-image-gen@0.1.12",
+      "latest_source": "npm:pi-codex-image-gen",
       "id": "pi-codex-image-gen",
       "kind": "npm",
       "note": "Codex image generation"
     },
     {
       "source": "npm:@tintinweb/pi-subagents@0.14.3",
+      "latest_source": "npm:@tintinweb/pi-subagents",
       "id": "@tintinweb/pi-subagents",
       "kind": "npm",
       "note": "Claude Code-style subagents"
     },
     {
       "source": "https://github.com/larryboiNEUQ/pi-auto-review",
+      "latest_source": "https://github.com/larryboiNEUQ/pi-auto-review",
       "id": "pi-auto-review",
       "kind": "git",
       "note": "Permission system + delegated safe-allow reviewer"
     },
     {
       "source": "npm:pi-mcp-adapter@2.21.0",
+      "latest_source": "npm:pi-mcp-adapter",
       "id": "pi-mcp-adapter",
       "kind": "npm",
       "note": "Token-efficient MCP adapter (~200 token proxy)"
     },
     {
       "source": "git:github.com/possibly/pi-gallery",
+      "latest_source": "git:github.com/possibly/pi-gallery",
       "id": "pi-gallery",
       "kind": "git",
       "note": "Session image gallery (/gallery)"
     },
     {
       "source": "https://github.com/larryboiNEUQ/pi-inline-skill-complete",
+      "latest_source": "https://github.com/larryboiNEUQ/pi-inline-skill-complete",
       "id": "pi-inline-skill-complete",
       "kind": "git",
       "note": "Mid-prompt skill autocomplete: type $name → insert /skill:name (Pi blocks mid-line / triggers)"
     },
     {
       "source": "npm:pi-skillful@0.3.14",
+      "latest_source": "npm:pi-skillful",
       "id": "pi-skillful",
       "kind": "npm",
       "note": "Expand /skill:name anywhere on submit; skill visibility toggles (/skillful)"
     },
     {
       "source": "npm:pi-spark@0.22.0",
+      "latest_source": "npm:pi-spark",
       "id": "pi-spark",
       "kind": "npm",
       "note": "TUI polish: editor border, credits, presets, recap, auto-title (footer disabled via configs/spark.json)"
     },
     {
       "source": "git:github.com/larryboiNEUQ/pi-calm",
+      "latest_source": "git:github.com/larryboiNEUQ/pi-calm",
       "id": "pi-calm",
       "kind": "git",
       "note": "Presentation-only Calm mode: hide collapsed thinking and built-in tool shells"
     },
     {
       "source": "npm:@juicesharp/rpiv-ask-user-question@2.4.0",
+      "latest_source": "npm:@juicesharp/rpiv-ask-user-question",
       "id": "@juicesharp/rpiv-ask-user-question",
       "kind": "npm",
       "note": "Structured multi-choice questionnaire tool (ask_user_question)"
     },
     {
       "source": "npm:@narumitw/pi-goal@0.49.6",
+      "latest_source": "npm:@narumitw/pi-goal",
       "id": "@narumitw/pi-goal",
       "kind": "npm",
       "note": "Autonomous /goal mode with goal_complete / goal_blocked"

@@ -2,6 +2,7 @@
 # Bootstrap Pi packages + local extensions from packages.json.
 # Usage:
 #   ./scripts/install.sh
+#   ./scripts/install.sh --latest
 #   ./scripts/install.sh --with-settings
 #   ./scripts/install.sh --dry-run
 set -euo pipefail
@@ -15,11 +16,13 @@ SETTINGS_JSON="${PI_AGENT_DIR}/settings.json"
 DRY_RUN=0
 WITH_SETTINGS=0
 SKIP_PACKAGES=0
+INSTALL_PROFILE="pinned"
 
 usage() {
   cat <<'EOF'
 Usage: install.sh [options]
 
+  --latest          Install unversioned/latest package sources.
   --with-settings    Merge settings.partial.json into ~/.pi/agent/settings.json
                      (theme / default model / thinking). Does not touch auth.
                      See settings.partial.json for current values.
@@ -33,6 +36,7 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --latest) INSTALL_PROFILE="latest"; shift ;;
     --with-settings) WITH_SETTINGS=1; shift ;;
     --skip-packages) SKIP_PACKAGES=1; shift ;;
     --dry-run) DRY_RUN=1; shift ;;
@@ -78,15 +82,105 @@ if [[ ! -f "$PACKAGES_JSON" ]]; then
   exit 1
 fi
 
+PACKAGE_SOURCES="$(python3 - "$PACKAGES_JSON" "$INSTALL_PROFILE" <<'PY'
+import json
+import re
+import sys
+from pathlib import Path
+from urllib.parse import urlparse
+
+manifest_path = Path(sys.argv[1])
+profile = sys.argv[2]
+
+exact_version = re.compile(
+    r"(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)"
+    r"(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?"
+    r"(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?\Z"
+)
+
+git_protocols = {"https", "http", "ssh", "git"}
+
+def valid_git_source(value):
+    if not isinstance(value, str) or any(character.isspace() for character in value):
+        return False
+    if value.startswith("git:") and not value.startswith("git://"):
+        shorthand = value[len("git:"):]
+        return "/" in shorthand and not shorthand.endswith("/")
+    parsed = urlparse(value)
+    return parsed.scheme in git_protocols and bool(parsed.netloc and parsed.path.strip("/"))
+
+try:
+    data = json.loads(manifest_path.read_text())
+except (OSError, json.JSONDecodeError) as exc:
+    print(f"Invalid package manifest {manifest_path}: {exc}", file=sys.stderr)
+    raise SystemExit(1)
+
+packages = data.get("packages")
+if not isinstance(packages, list):
+    print("Invalid package manifest: 'packages' must be a list", file=sys.stderr)
+    raise SystemExit(1)
+
+errors = []
+seen_ids = set()
+for index, package in enumerate(packages):
+    if not isinstance(package, dict):
+        errors.append(f"packages[{index}] must be an object")
+        continue
+
+    package_id = package.get("id")
+    kind = package.get("kind")
+    source = package.get("source")
+    latest_source = package.get("latest_source")
+    label = package_id or f"packages[{index}]"
+
+    if not isinstance(package_id, str) or not package_id:
+        errors.append(f"packages[{index}].id must be a non-empty string")
+    elif package_id in seen_ids:
+        errors.append(f"duplicate package id: {package_id}")
+    else:
+        seen_ids.add(package_id)
+
+    if kind not in {"npm", "git"}:
+        errors.append(f"{label}.kind must be 'npm' or 'git'")
+    if not isinstance(source, str) or not source:
+        errors.append(f"{label}.source must be a non-empty string")
+    if not isinstance(latest_source, str) or not latest_source:
+        errors.append(f"{label}.latest_source must be a non-empty string")
+
+    if kind == "npm" and isinstance(package_id, str) and package_id:
+        expected_latest = f"npm:{package_id}"
+        pinned_prefix = f"{expected_latest}@"
+        version = source[len(pinned_prefix):] if isinstance(source, str) and source.startswith(pinned_prefix) else ""
+        if not exact_version.fullmatch(version):
+            errors.append(f"{label}.source must pin an exact version as {pinned_prefix}<version>")
+        if isinstance(latest_source, str) and latest_source != expected_latest:
+            errors.append(f"{label}.latest_source must be {expected_latest}")
+    elif kind == "git":
+        for field_name, value in (("source", source), ("latest_source", latest_source)):
+            if isinstance(value, str) and value and not valid_git_source(value):
+                errors.append(f"{label}.{field_name} must be a valid single-line Git source")
+
+if errors:
+    for error in errors:
+        print(f"Invalid package manifest: {error}", file=sys.stderr)
+    raise SystemExit(1)
+
+field = "latest_source" if profile == "latest" else "source"
+for package in packages:
+    print(package[field])
+PY
+)"
+
 log "Pi: $(pi --version 2>/dev/null || echo unknown)"
 log "Agent dir: $PI_AGENT_DIR"
+log "Install profile: $INSTALL_PROFILE"
 mkdir -p "$PI_AGENT_DIR/extensions" "$PI_AGENT_DIR/agents"
 
 # ---------------------------------------------------------------------------
 # Install remote packages via `pi install`
 # ---------------------------------------------------------------------------
 if [[ "$SKIP_PACKAGES" -eq 0 ]]; then
-  log "Installing packages from packages.json"
+  log "Installing packages from packages.json ($INSTALL_PROFILE)"
   while IFS= read -r source; do
     [[ -z "$source" ]] && continue
     log "pi install $source"
@@ -98,13 +192,7 @@ if [[ "$SKIP_PACKAGES" -eq 0 ]]; then
         echo "WARN: failed to install $source (continuing)" >&2
       fi
     fi
-  done < <(python3 - "$PACKAGES_JSON" <<'PY'
-import json, sys
-data = json.load(open(sys.argv[1]))
-for p in data.get("packages", []):
-    print(p["source"])
-PY
-)
+  done <<< "$PACKAGE_SOURCES"
 else
   log "Skipping package installs (--skip-packages)"
 fi
