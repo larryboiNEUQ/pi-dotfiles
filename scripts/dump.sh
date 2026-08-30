@@ -137,6 +137,11 @@ doc = {
             "path": "configs/spark.json",
             "target": "~/.pi/agent/spark.json",
             "note": "Disable pi-spark footer so footer-no-model owns the status bar"
+        },
+        {
+            "path": "configs/pi-fff.json",
+            "target": "~/.pi/agent/pi-fff.json",
+            "note": "Run pi-fff in override mode without root or home scanning"
         }
     ]),
     "local_agents": old.get("local_agents", [
@@ -171,6 +176,11 @@ if [[ "$SYNC_LOCALS" -eq 1 ]]; then
     mkdir -p "${ROOT}/configs"
     cp -f "${PI_AGENT_DIR}/spark.json" "${ROOT}/configs/spark.json"
     echo "  synced configs/spark.json"
+  fi
+  if [[ -f "${PI_AGENT_DIR}/pi-fff.json" ]]; then
+    mkdir -p "${ROOT}/configs"
+    cp -f "${PI_AGENT_DIR}/pi-fff.json" "${ROOT}/configs/pi-fff.json"
+    echo "  synced configs/pi-fff.json"
   fi
   if [[ -d "${PI_AGENT_DIR}/agents" ]]; then
     mkdir -p "${ROOT}/agents"

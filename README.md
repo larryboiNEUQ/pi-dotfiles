@@ -61,6 +61,7 @@ curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scrip
 | 包 | 作用 |
 |----|------|
 | `pi-hashline-edit` | 按 hash 锚定的行编辑辅助 |
+| [`@ff-labs/pi-fff`](https://github.com/dmtrKovalenko/fff/tree/main/packages/pi-fff) | FFF 模糊文件/内容搜索；通过配置以 `find` / `grep` 同名覆盖原生工具 |
 | `@tintinweb/pi-subagents` | Claude Code 风格 subagents |
 
 ### 网络与媒体
@@ -92,6 +93,7 @@ curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scrip
 | 包 | 作用 |
 |----|------|
 | `pi-spark` | 紧凑 editor、credits / 限流、presets、idle recap、自动 session 标题等 |
+| [`pi-calm`](https://github.com/larryboiNEUQ/pi-calm) | `/calm` 切换安静展示：隐藏折叠 thinking 与内置工具外壳，保留完整执行和会话数据 |
 | `@juicesharp/rpiv-ask-user-question` | 结构化多选问卷工具 `ask_user_question`（有歧义时问你而不是瞎猜） |
 | `@narumitw/pi-goal` | `/goal` 自主目标模式（`goal_complete` / `goal_blocked`） |
 
@@ -102,6 +104,7 @@ curl -fsSL https://raw.githubusercontent.com/larryboiNEUQ/pi-dotfiles/main/scrip
 | `plan-mode` | 官方 plan 模式（`/plan`，快捷键见扩展说明） |
 | `footer-no-model.ts` | 原版风格 token / 金额 / 上下文 footer，**不显示**右侧模型（避免与 pi-spark 顶栏重复） |
 | `configs/spark.json` | `{ "footer": false }` — 关掉 pi-spark 自带 footer，让上面的 footer 接管状态栏 |
+| `configs/pi-fff.json` | 让 pi-fff 以 `override` 模式提供 `find` / `grep`，并禁用根目录与 HOME 扫描 |
 | agents | Explore / Plan / Worker / general-purpose 子 agent 定义 |
 
 ## 装完验证
@@ -113,6 +116,8 @@ pi list
 /mcp setup          # 若用 pi-mcp-adapter
 /plan               # plan-mode
 /goal <目标>        # pi-goal（若已装）
+/calm              # 切换 Calm 安静展示
+/fff-health         # 检查 pi-fff 索引状态
 # 正文中间输入 $skill名  → inline skill 补全
 /gallery            # 有图时
 ```

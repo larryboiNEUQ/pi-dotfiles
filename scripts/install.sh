@@ -260,10 +260,11 @@ if [[ "$DRY_RUN" -eq 0 ]]; then
   echo "  1. Restart pi (or open a new session)"
   echo "  2. /login if models need auth on this machine"
   echo "  3. /mcp setup  (if using pi-mcp-adapter)"
-  echo "  4. /plan or Ctrl+Alt+P for plan-mode; /gallery for images"
+  echo "  4. /plan or Ctrl+Alt+P for plan-mode; /gallery for images; /calm for Calm mode"
   echo "  5. Mid-prompt type \$skill-name for skill autocomplete (pi-inline-skill-complete)"
   echo "  6. /goal <objective> for autonomous goal mode (pi-goal)"
-  echo "  7. Footer should show ↑↓ tokens + cost (footer-no-model); model only on editor border"
+  echo "  7. /fff-health should report pi-fff; find/grep run through FFF override mode"
+  echo "  8. Footer should show ↑↓ tokens + cost (footer-no-model); model only on editor border"
   echo
   echo "Optional: re-run with --with-settings to apply theme/model defaults"
   echo "  (values in settings.partial.json; does not touch auth)"
