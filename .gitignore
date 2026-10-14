@@ -18,3 +18,4 @@ logs/
 **/logs/
 mcp-cache.json
 models-store.json
+.audit/
