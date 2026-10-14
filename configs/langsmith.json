@@ -1,0 +1,5 @@
+{
+  "enabled": true,
+  "api_url": "https://api.smith.langchain.com",
+  "project": "pi"
+}
