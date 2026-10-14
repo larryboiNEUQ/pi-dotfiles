@@ -1,0 +1,6 @@
+{
+  "provider": "devin",
+  "model": "swe-2",
+  "timeoutMs": 90000,
+  "disabled": false
+}

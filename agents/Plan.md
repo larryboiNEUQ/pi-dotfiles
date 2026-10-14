@@ -1,10 +1,11 @@
 ---
 description: Software architect agent for designing implementation plans and evaluating trade-offs.
 display_name: Plan
+enabled: false
 tools: read, bash, grep, find, ls
 extensions: true
 skills: true
-model: openai-codex/gpt-5.6-terra
+model: openai-codex/gpt-6-astra
 thinking: high
 prompt_mode: replace
 ---

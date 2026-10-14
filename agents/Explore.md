@@ -4,8 +4,8 @@ display_name: Explore
 tools: read, bash, grep, find, ls
 extensions: true
 skills: true
-model: openai-codex/gpt-5.6-terra
-thinking: high
+model: openai-codex/gpt-6-sol
+thinking: low
 prompt_mode: replace
 ---
 
